@@ -1,0 +1,10 @@
+**/node_modules/
+dist/
+.*/
+/gr*
+.ignore*
+*.md
+!README.md
+.env
+.env.*
+!.env.example

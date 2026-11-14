@@ -1,0 +1,66 @@
+/* Hallmark · Bloom · app screen · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H5 E4 S5 R5 V4 */
+:root {
+  color-scheme: light;
+  --color-paper: oklch(97% 0.010 72);
+  --color-paper-2: oklch(94.6% 0.013 70);
+  --color-paper-3: oklch(91.5% 0.016 66);
+  --color-sheet: oklch(98.7% 0.007 78);
+  --color-ink: oklch(21% 0.024 40);
+  --color-muted: oklch(47% 0.026 56);
+  --color-rule: oklch(88% 0.014 64);
+  --color-control: oklch(64% 0.025 60);
+  --color-accent: oklch(50% 0.145 36);
+  --color-accent-hover: oklch(44% 0.138 36);
+  --color-accent-soft: oklch(53% 0.145 36 / 0.11);
+  --color-accent-ink: oklch(98.5% 0.008 72);
+  --color-focus: var(--color-accent);
+  --color-error: oklch(46% 0.17 27);
+  --color-error-soft: oklch(95% 0.023 27);
+  --color-field: oklch(99.6% 0.002 78);
+  --color-checker-light: var(--color-paper-2);
+  --color-checker-dark: color-mix(in oklab, var(--color-rule) 65%, var(--color-paper-2));
+  --color-grid: oklch(21% 0.024 40 / 0.13);
+
+  --font-body: system-ui, "Malgun Gothic", sans-serif;
+  --font-display: var(--font-body);
+  --display-weight: 700;
+  --tracking-display: -0.035em;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.2rem;
+  --text-display: 1.728rem;
+  --text-section: var(--text-lg);
+  --text-title: var(--text-md);
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --radius-card: 18px;
+  --radius-inner: 10px;
+  --radius-clip: 6px;
+  --shadow-card: 0 2px 6px oklch(21% 0.024 40 / 0.07), 0 14px 22px -18px oklch(21% 0.024 40 / 0.20);
+  --container: 1200px;
+  --gutter: 32px;
+  --gap-columns: 24px;
+  --control-height: 40px;
+  --z-base: 1;
+  --z-sticky-nav: 10;
+}
+
+@media (max-width: 60rem) {
+  :root { --gutter: 24px; }
+}
+@media (max-width: 40rem) {
+  :root {
+    --gutter: 16px;
+    --gap-columns: 16px;
+    --control-height: 44px;
+  }
+}
+@media (pointer: coarse) {
+  :root { --control-height: 44px; }
+}
