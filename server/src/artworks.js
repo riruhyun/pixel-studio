@@ -62,6 +62,20 @@ artworks.get("/me/artworks", requireUser, async (req, res) => {
   res.json(rows);
 });
 
+artworks.get("/me/artwork-stats", requireUser, async (req, res) => {
+  const [[stats]] = await db.execute(
+    `
+    SELECT COUNT(CASE WHEN a.is_public = TRUE THEN a.id END) AS public_count,
+           COUNT(CASE WHEN a.is_public = FALSE THEN a.id END) AS private_count
+    FROM users u LEFT JOIN artworks a ON a.user_id = u.id
+    WHERE u.id = ?
+    GROUP BY u.id
+  `,
+    [req.user.id],
+  );
+  res.set("Cache-Control", "private, no-store").json(stats);
+});
+
 artworks.get("/artworks/:id", async (req, res) => {
   const viewer = req.user?.id ?? null;
   const [rows] = await db.execute(
