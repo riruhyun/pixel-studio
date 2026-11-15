@@ -795,20 +795,27 @@ button[aria-pressed="true"] {
   justify-content: space-between;
   gap: var(--space-sm);
 }
+.artwork-title-row {
+  align-items: flex-start;
+}
 .artwork-visibility {
   display: inline-flex;
   margin-inline-start: var(--space-xs);
   vertical-align: middle;
   color: var(--color-muted);
 }
-.artwork-edit {
+.artwork-actions {
+  display: grid;
+  gap: var(--space-2xs);
   flex: none;
+}
+.artwork-edit {
   padding-inline: var(--space-md);
   border-color: var(--color-ink);
   background-color: var(--color-ink);
   color: var(--color-sheet);
 }
-.artwork-edit .icon {
+.artwork-actions .icon {
   width: 16px;
   height: 16px;
 }

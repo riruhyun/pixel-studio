@@ -149,7 +149,9 @@ export default function App() {
           onLogin={() => goTo('/login', '', { ...window.history.state, returnToPublish: true }, true)}
           onSave={saveArtwork} />}
         {page === 'artwork' && <Artwork key={route.id} id={route.id} fromProfile={route.from === 'profile' && Boolean(user)}
-          onBack={navigate} onEdit={openEditor} />}
+          onBack={navigate} onEdit={openEditor} onDeleted={next => {
+            if (currentRoute().id === route.id) goTo(`/${next}`, '작품을 삭제했습니다.', null, true)
+          }} />}
         {(page === 'login' || page === 'register') && <AuthForm key={page} register={page === 'register'}
           onSwitch={() => goTo(page === 'login' ? '/register' : '/login', '', window.history.state, true)}
           onRegistered={notice => goTo('/login', notice, window.history.state, true)}

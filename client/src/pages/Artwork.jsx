@@ -3,9 +3,10 @@ import { api } from '../api'
 import ArtworkFigure from '../components/ArtworkFigure'
 import { StudioIcon } from '../components/StudioGraphics'
 
-export default function Artwork({ id, fromProfile, onBack, onEdit }) {
+export default function Artwork({ id, fromProfile, onBack, onEdit, onDeleted }) {
   const [art, setArt] = useState(null)
   const [error, setError] = useState('')
+  const [removing, setRemoving] = useState(false)
   const [copyMessage, setCopyMessage] = useState('')
   const [showTransparency, setShowTransparency] = useState(false)
 
@@ -30,6 +31,20 @@ export default function Artwork({ id, fromProfile, onBack, onEdit }) {
   const hasCreatedDate = Number.isFinite(Date.parse(art?.created_date))
   const visibility = art?.is_public ? '공개 작품' : '비공개 작품'
 
+  async function remove() {
+    if (!window.confirm(`‘${art.title}’ 작품을 삭제할까요?`)) return
+    setRemoving(true)
+    setError('')
+    try {
+      await api(`/artworks/${id}`, { method: 'DELETE' })
+      onDeleted(backPage)
+    } catch (failure) {
+      setError(failure.message)
+    } finally {
+      setRemoving(false)
+    }
+  }
+
   return (
     <article className="artwork-page" aria-label="작품 상세">
       <div className="artwork-navigation">
@@ -41,7 +56,7 @@ export default function Artwork({ id, fromProfile, onBack, onEdit }) {
           <StudioIcon name="checkerboard" />
         </button>}
       </div>
-      {error && <p className="collection-state error" role="alert">{error}</p>}
+      {error && !art && <p className="collection-state error" role="alert">{error}</p>}
       {!error && !art && <p className="collection-state muted" role="status">작품을 불러오는 중…</p>}
       {art && <>
         <ArtworkFigure pixels={art.pixel_data} title={art.title} showTransparency={showTransparency}>
@@ -52,10 +67,17 @@ export default function Artwork({ id, fromProfile, onBack, onEdit }) {
                 <StudioIcon name={art.is_public ? 'globe' : 'lock'} />
               </span>
             </h1>
-            {art.can_edit && <button className="artwork-edit" type="button" aria-label="작품 수정" onClick={() => onEdit(art)}>
-              <StudioIcon name="pencil" />수정
-            </button>}
+            {art.can_edit && <div className="artwork-actions">
+              <button className="artwork-edit" type="button" aria-label="작품 수정" onClick={() => onEdit(art)} disabled={removing}>
+                <StudioIcon name="pencil" />수정
+              </button>
+              <button className="danger" type="button" onClick={remove} disabled={removing}>
+                <StudioIcon name="trash" />
+                {removing ? '삭제 중…' : '삭제'}
+              </button>
+            </div>}
           </div>
+          {error && <p className="error" role="alert">{error}</p>}
           {art.description && <p className="artwork-description">{art.description}</p>}
           <dl className="artwork-metadata">
             <div><dt>작가:</dt><dd>{art.nickname}</dd></div>
