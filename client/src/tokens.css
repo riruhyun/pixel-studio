@@ -1,8 +1,8 @@
-/* Hallmark · Bloom · app screen · v2.0.0 */
-/* Hallmark · pre-emit critique: P4 H5 E4 S5 R5 V4 */
+/* Hallmark , Bloom , app screen , v2.0.0 */
+/* Hallmark , pre-emit critique: P4 H5 E4 S5 R5 V4 */
 :root {
   color-scheme: light;
-  --color-paper: oklch(97% 0.010 72);
+  --color-paper: oklch(97% 0.01 72);
   --color-paper-2: oklch(94.6% 0.013 70);
   --color-paper-3: oklch(91.5% 0.016 66);
   --color-sheet: oklch(98.7% 0.007 78);
@@ -19,7 +19,11 @@
   --color-error-soft: oklch(95% 0.023 27);
   --color-field: oklch(99.6% 0.002 78);
   --color-checker-light: var(--color-paper-2);
-  --color-checker-dark: color-mix(in oklab, var(--color-rule) 65%, var(--color-paper-2));
+  --color-checker-dark: color-mix(
+    in oklab,
+    var(--color-rule) 65%,
+    var(--color-paper-2)
+  );
   --color-grid: oklch(21% 0.024 40 / 0.13);
   --color-artwork-paper: #fff;
   --color-frame-depth: oklch(34% 0.071 62);
@@ -50,7 +54,11 @@
   --text-landing: clamp(2.875rem, 1.7rem + 3.65vw, 5rem);
   --text-exhibit-title: clamp(1.875rem, 1.5rem + 1.25vw, 2.5rem);
   --text-artwork-title: clamp(2rem, 1.5rem + 1.5vw, 3rem);
-  --color-landing-grid: color-mix(in oklab, var(--color-rule) 65%, var(--color-paper));
+  --color-landing-grid: color-mix(
+    in oklab,
+    var(--color-rule) 65%,
+    var(--color-paper)
+  );
   --radius-inner: 4px;
   --radius-button: 999px;
   --header-height: 68px;
@@ -89,7 +97,9 @@
 }
 
 @media (max-width: 60rem) {
-  :root { --gutter: 24px; }
+  :root {
+    --gutter: 24px;
+  }
 }
 @media (max-width: 40rem) {
   :root {
@@ -99,5 +109,7 @@
   }
 }
 @media (pointer: coarse) {
-  :root { --control-height: 44px; }
+  :root {
+    --control-height: 44px;
+  }
 }

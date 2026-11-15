@@ -1,10 +1,10 @@
-/* Hallmark · shape: app screen with one-screen landing · genre: playful · theme: Bloom · redesign: full
- * hero: Stage (/) · nav: responsive top bar · signature: one 16 × 16 artwork, from canvas to exhibition
- * axes: light/grotesk-sans/warm · posture: quiet · v2.0.0 */
-/* Hallmark · pre-emit critique: keep the drawing in view when the palette wraps on mobile */
-/* Hallmark · surface: absolute on the artwork mat */
-/* Hallmark · waive 7b · opaque white mat behind transparent pixels · The artwork preview requires a white background in both publish and detail views */
-/* Hallmark · finish review: shortened gallery rows and compacted the toolbar at 320px */
+/* Hallmark , shape: app screen with one-screen landing , genre: playful , theme: Bloom , redesign: full
+ * hero: Stage (/) , nav: responsive top bar , signature: one 16 × 16 artwork, from canvas to exhibition
+ * axes: light/grotesk-sans/warm , posture: quiet , v2.0.0 */
+/* Hallmark , pre-emit critique: keep the drawing in view when the palette wraps on mobile */
+/* Hallmark , surface: absolute on the artwork mat */
+/* Hallmark , waive 7b , opaque white mat behind transparent pixels , The artwork preview requires a white background in both publish and detail views */
+/* Hallmark , finish review: shortened gallery rows and compacted the toolbar at 320px */
 @import "./tokens.css";
 @import "./base.css";
 @import "./App.css";
