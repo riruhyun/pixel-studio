@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { normalizePixels, SIZE } from '../pixels'
 
-export function PixelPreview({ pixels, label }) {
+export function PixelPreview({ pixels, label, showTransparency = false }) {
   const canvas = useRef(null)
 
   useEffect(() => {
@@ -15,14 +15,14 @@ export function PixelPreview({ pixels, label }) {
   }, [pixels])
 
   return (
-    <div className="pixel-preview">
+    <div className={showTransparency ? 'pixel-preview is-transparent' : 'pixel-preview'}>
       <canvas ref={canvas} width={SIZE} height={SIZE}
         role={label ? 'img' : undefined} aria-label={label} aria-hidden={!label} />
     </div>
   )
 }
 
-export default function PixelGrid({ pixels, onPaint }) {
+export default function PixelGrid({ pixels, onPaint, drag, mirror, busy }) {
   const stroke = useRef(null)
   const [active, setActive] = useState(0)
 
@@ -34,21 +34,24 @@ export default function PixelGrid({ pixels, onPaint }) {
   }
 
   function begin(event) {
-    if (event.button !== 0 || !event.isPrimary) return
+    if (busy || event.button !== 0 || !event.isPrimary) return
     const point = position(event)
     if (!point) return
-    event.currentTarget.setPointerCapture(event.pointerId)
-    stroke.current = { id: event.pointerId, point }
-    onPaint([point.y * SIZE + point.x])
+    const token = drag ? Symbol() : null
+    if (drag) {
+      event.currentTarget.setPointerCapture(event.pointerId)
+      stroke.current = { id: event.pointerId, point, token }
+    }
+    onPaint([point.y * SIZE + point.x], token)
   }
 
   function move(event) {
-    if (stroke.current?.id !== event.pointerId) return
+    if (busy || stroke.current?.id !== event.pointerId) return
     const point = position(event)
     const previous = stroke.current.point
     stroke.current.point = point
     if (!point) return
-    if (!previous) return onPaint([point.y * SIZE + point.x])
+    if (!previous) return onPaint([point.y * SIZE + point.x], stroke.current.token)
 
     const dx = point.x - previous.x
     const dy = point.y - previous.y
@@ -60,7 +63,7 @@ export default function PixelGrid({ pixels, onPaint }) {
       const y = previous.y + Math.round(dy * step / steps)
       indexes.push(y * SIZE + x)
     }
-    onPaint(indexes)
+    onPaint(indexes, stroke.current.token)
   }
 
   function end(event) {
@@ -82,11 +85,11 @@ export default function PixelGrid({ pixels, onPaint }) {
   }
 
   return (
-    <div className="pixel-grid pixel-editor" role="group" aria-label="16×16 픽셀 격자"
+    <div className={`pixel-grid pixel-editor${mirror ? ' is-mirrored' : ''}`} role="group" aria-label="16×16 픽셀 격자"
       onPointerDown={begin} onPointerMove={move} onPointerUp={end}
       onPointerCancel={end} onLostPointerCapture={end}>
       {pixels.map((color, index) => (
-        <button key={index} type="button" tabIndex={index === active ? 0 : -1}
+        <button key={index} type="button" tabIndex={index === active ? 0 : -1} disabled={busy}
           aria-label={`${Math.floor(index / SIZE) + 1}행 ${index % SIZE + 1}열, ${color || '빈 칸'}`}
           style={{ backgroundColor: color }}
           onFocus={() => setActive(index)} onKeyDown={event => moveFocus(event, index)}

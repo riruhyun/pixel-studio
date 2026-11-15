@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { api } from '../api'
-import { StudioIcon } from '../components/StudioGraphics'
 import RequiredField from '../components/RequiredField'
+import { StudioIcon } from '../components/StudioGraphics'
 import { useRequiredFields } from '../useRequiredFields'
 
 export function AuthForm({ register, onLogin, onRegistered, onSwitch }) {
@@ -30,8 +30,8 @@ export function AuthForm({ register, onLogin, onRegistered, onSwitch }) {
   const title = register ? '회원가입' : '로그인'
   return (
     <section className="auth-layout" aria-labelledby="auth-title">
-      <form className="panel form-stack auth-form" noValidate onSubmit={submit} onInput={clearFieldError}>
-        <header className="page-heading"><h1 id="auth-title">{title}</h1><p>{register ? '계정을 만들어 작품을 저장하고 공유하세요.' : '로그인해서 작품을 저장하고 관리하세요.'}</p></header>
+      <form className="form-stack auth-form" noValidate onSubmit={submit} onInput={clearFieldError}>
+        <h1 id="auth-title">{title}</h1>
         <RequiredField label="아이디" name="username" autoComplete="username" maxLength={30}
           invalid={invalidField === 'username'} message="아이디를 입력해 주세요." />
         {register && <RequiredField label="닉네임" name="nickname" autoComplete="nickname" maxLength={30}
@@ -51,6 +51,7 @@ export function AuthForm({ register, onLogin, onRegistered, onSwitch }) {
 }
 
 export function Profile({ user, onUpdated, onDeleted }) {
+  const [editingNickname, setEditingNickname] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const { invalidField, validate, clearFieldError } = useRequiredFields()
@@ -59,11 +60,16 @@ export function Profile({ user, onUpdated, onDeleted }) {
     event.preventDefault()
     if (busy) return
     setError('')
+    if (!editingNickname) {
+      setEditingNickname(true)
+      return
+    }
     if (!validate(event.currentTarget)) return
     const nickname = new FormData(event.currentTarget).get('nickname')
     setBusy(true)
     try {
       onUpdated(await api('/me', { method: 'PATCH', body: { nickname } }))
+      setEditingNickname(false)
     } catch (failure) {
       setError(failure.message)
     } finally {
@@ -86,16 +92,35 @@ export function Profile({ user, onUpdated, onDeleted }) {
   }
 
   return (
-    <section className="panel profile" aria-labelledby="profile-title">
-      <div className="profile-heading"><span className="account-avatar"><StudioIcon name="user" /></span><h2 id="profile-title">프로필</h2></div>
-      <form className="form-stack" noValidate onSubmit={update} onInput={clearFieldError}>
-        <div className="profile-username"><span>아이디</span><strong>{user.username}</strong></div>
-        <RequiredField label="닉네임" name="nickname" defaultValue={user.nickname} maxLength={30}
-          invalid={invalidField === 'nickname'} message="닉네임을 입력해 주세요." />
-        {error && <p className="error" role="alert">{error}</p>}
-        <button disabled={busy}>닉네임 저장</button>
-      </form>
-      <div className="profile-footer"><button className="text-button danger" type="button" onClick={remove} disabled={busy}>회원 탈퇴</button></div>
+    <section className="profile" aria-labelledby="profile-title">
+      <h1 id="profile-title">프로필</h1>
+      <dl className="profile-metadata">
+        <div><dt>아이디</dt><dd>{user.username}</dd></div>
+        <div>
+          <dt id="profile-nickname-label">닉네임</dt>
+          <dd>
+            <form className="form-stack profile-nickname-row" noValidate onSubmit={update} onInput={clearFieldError}>
+              {editingNickname
+                ? <RequiredField name="nickname" autoComplete="nickname" defaultValue={user.nickname}
+                    autoFocus aria-labelledby="profile-nickname-label" maxLength={30}
+                    invalid={invalidField === 'nickname'} message="닉네임을 입력해 주세요." />
+                : <span>{user.nickname}</span>}
+              <button className={editingNickname ? 'primary' : undefined} disabled={busy}>
+                {editingNickname ? '변경하기' : '닉네임 수정'}
+              </button>
+            </form>
+          </dd>
+        </div>
+        {Number.isFinite(Date.parse(user.created_date)) && <div>
+          <dt>가입일</dt><dd><time dateTime={user.created_date}>{user.created_date}</time></dd>
+        </div>}
+      </dl>
+      {error && <p className="error" role="alert">{error}</p>}
+      <div className="profile-footer">
+        <button className="text-button danger" type="button" onClick={remove} disabled={busy}>
+          <StudioIcon name="userMinus" /> 회원 탈퇴
+        </button>
+      </div>
     </section>
   )
 }

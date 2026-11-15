@@ -39,7 +39,7 @@ export default function Works({ mine = false, onEdit, onNew, onOpen }) {
           {mine ? <h2 id="collection-title">내 작품</h2> : <h1 id="collection-title">공개 갤러리</h1>}
           {items && <span className="collection-count">{items.length}개</span>}
         </div>
-        <button className="primary" onClick={onNew}><StudioIcon name={mine ? 'plus' : 'pencil'} />{mine ? '새 작품' : '픽셀 아트 그리기'}</button>
+        <button className="primary" onClick={onNew}>{mine ? '새 작품' : '그리기'}</button>
       </div>
       {error && <div className={items ? 'notice error' : 'collection-state'}>
         <p className="error" role="alert">{error}</p>
@@ -47,25 +47,26 @@ export default function Works({ mine = false, onEdit, onNew, onOpen }) {
       </div>}
       {!error && !items && <p role="status" className="collection-state muted">작품을 불러오는 중…</p>}
       {items?.length === 0 && <div className="collection-state">
-        <span className="empty-icon"><StudioIcon name="gallery" /></span>
         <p>{mine ? '저장한 작품이 없어요.' : '아직 공개된 작품이 없어요.'}</p>
       </div>}
       {Boolean(items?.length) && (
-        <ul className="works-grid">
+        <ul className={mine ? 'work-list' : 'gallery-grid'} role="list">
           {items.map(art => (
-            <li key={art.id} className="work-card">
-              <a className="work-link" href={`/artworks/${art.id}`} aria-labelledby={`work-title-${art.id}`}
+            <li key={art.id} className={mine ? 'work-card' : undefined}>
+              <a className={mine ? 'work-link' : 'gallery-link'} href={`/artworks/${art.id}`} aria-labelledby={`work-title-${art.id}`}
                 onClick={event => onOpen(event, art.id, mine ? 'profile' : 'gallery')}>
-                <div className="work-image"><PixelPreview pixels={art.pixel_data} /></div>
+                <PixelPreview pixels={art.pixel_data} />
                 <div className="work-info">
                   <WorkTitle className="work-title" id={`work-title-${art.id}`}>{art.title}</WorkTitle>
-                  <p className="work-meta"><StudioIcon name={mine ? (art.is_public ? 'globe' : 'lock') : 'user'} />
-                    {mine ? (art.is_public ? '공개' : '비공개') : art.nickname}</p>
+                  <p className="work-meta">
+                    {mine && <StudioIcon name={art.is_public ? 'globe' : 'lock'} />}
+                    {mine ? (art.is_public ? '공개' : '비공개') : art.nickname}
+                  </p>
                 </div>
               </a>
-              {mine && <div className="tool-row work-actions">
-                <button onClick={() => onEdit(art)} disabled={removing !== null}><StudioIcon name="pencil" />수정</button>
-                <button className="danger" onClick={() => remove(art)} disabled={removing !== null}><StudioIcon name="trash" />
+              {mine && <div className="work-actions">
+                <button onClick={() => onEdit(art)} disabled={removing !== null}>수정</button>
+                <button className="danger" onClick={() => remove(art)} disabled={removing !== null}>
                   {removing === art.id ? '삭제 중…' : '삭제'}
                 </button>
               </div>}

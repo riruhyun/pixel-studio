@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PixelPreview } from '../components/PixelGrid'
+import ArtworkFigure from '../components/ArtworkFigure'
 import { StudioIcon } from '../components/StudioGraphics'
 import RequiredField from '../components/RequiredField'
 import { useRequiredFields } from '../useRequiredFields'
@@ -28,23 +28,18 @@ export default function Publish({ draft, setDraft, user, ready, busy, onBack, on
   return (
     <>
       <header className="page-heading editor-heading">
-        <div><h1>{draft.id ? '수정 내용 확인' : '작품 게시'}</h1>
-          <p>전시될 모습을 확인하고 작품을 소개해 보세요.</p></div>
+        <h1>{draft.id ? '수정 내용 확인' : '작품 게시'}</h1>
         <button type="button" onClick={onBack} disabled={busy}><StudioIcon name="pencil" />계속 그리기</button>
       </header>
       <div className="artwork-layout">
-        <section className="panel canvas-panel" aria-labelledby="preview-title">
-          <div className="canvas-caption"><h2 id="preview-title">전시 미리보기</h2><span>16 × 16</span></div>
-          <div className="display-stage"><PixelPreview pixels={draft.pixel_data} label="작품의 전시 미리보기" /></div>
-        </section>
-        <form className="panel form-stack artwork-form" noValidate onSubmit={submit} onInput={clearFieldError}>
-          <h2>작품 정보</h2>
+        <ArtworkFigure pixels={draft.pixel_data} title={draft.title.trim() || '제목 없음'} author={user?.nickname} />
+        <form className="form-stack artwork-form" aria-label="작품 정보" noValidate onSubmit={submit} onInput={clearFieldError}>
           <RequiredField label="제목" name="title" value={draft.title} maxLength={100} disabled={busy}
             invalid={invalidField === 'title'} message="작품 제목을 입력해 주세요."
             onChange={event => { const title = event.target.value; setDraft(previous => ({ ...previous, title })) }} />
           <label htmlFor="artwork-description">
             <span className="field-caption">작품 설명 <span className="muted">선택</span></span>
-            <textarea id="artwork-description" placeholder="무엇을 그렸는지, 어떤 이야기가 담겼는지 알려주세요."
+            <textarea id="artwork-description"
               value={draft.description} rows={5} maxLength={descriptionLimit} disabled={busy} aria-describedby="description-count"
               onChange={event => { const description = event.target.value; setDraft(previous => ({ ...previous, description })) }} />
             <small className="field-count" id="description-count">{draft.description.length} / {descriptionLimit}자</small>

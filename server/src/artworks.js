@@ -47,6 +47,7 @@ artworks.get('/artworks/:id', async (req, res) => {
   const viewer = req.user?.id ?? null
   const [rows] = await db.execute(`
     SELECT a.id, a.title, a.description, a.pixel_data, a.is_public, u.nickname,
+      DATE_FORMAT(a.created_at, '%Y-%m-%d') AS created_date,
       (a.user_id = ?) AS can_edit
     FROM artworks a JOIN users u ON a.user_id = u.id
     WHERE a.id = ? AND (a.is_public = TRUE OR a.user_id = ?)

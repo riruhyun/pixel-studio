@@ -6,11 +6,15 @@ import { AuthForm, Profile } from './pages/Account'
 import Works from './pages/Works'
 import Publish from './pages/Publish'
 import Artwork from './pages/Artwork'
+import Landing from './pages/Landing'
 import { StudioIcon } from './components/StudioGraphics'
 
-const newDraft = () => ({ title: '', description: '', pixel_data: emptyPixels(), is_public: false })
+const newDraft = () => ({
+  title: '', description: '', pixel_data: emptyPixels(), is_public: false,
+  history: { past: [], future: [], stroke: null },
+})
 const pages = new Map([
-  ['/', 'gallery'], ['/editor', 'editor'], ['/publish', 'publish'],
+  ['/', 'home'], ['/gallery', 'gallery'], ['/editor', 'editor'], ['/publish', 'publish'],
   ['/profile', 'profile'], ['/login', 'login'], ['/register', 'register'],
 ])
 
@@ -59,11 +63,12 @@ export default function App() {
   }
 
   function navigate(next, notice = '') {
-    goTo(next === 'gallery' ? '/' : `/${next}`, notice)
+    goTo(next === 'home' ? '/' : `/${next}`, notice)
   }
 
   function openEditor(art) {
     setDraft(art ? {
+      ...newDraft(),
       id: art.id, title: art.title, description: art.description ?? '',
       pixel_data: normalizePixels(art.pixel_data), is_public: Boolean(art.is_public),
     } : newDraft())
@@ -106,10 +111,10 @@ export default function App() {
   }
 
   return (
-    <div className="studio-layout">
+    <div className={page === 'home' ? 'studio-layout landing-layout' : 'studio-layout'}>
       <header className="site-header">
         <div className="site-header-inner">
-          <button className="brand" type="button" onClick={() => navigate('gallery')}>
+          <button className="brand" type="button" onClick={() => navigate('home')}>
             <span className="brand-mark" aria-hidden="true" />Pixel Studio
           </button>
           <nav aria-label="주 메뉴">
@@ -135,6 +140,7 @@ export default function App() {
       <main className="site-main">
         {message && <p className="notice" role="status">{message}</p>}
         {error && <p className="error notice" role="alert">{error}</p>}
+        {page === 'home' && <Landing onDraw={() => openEditor()} />}
         {page === 'gallery' && <Works onNew={() => navigate('editor')} onOpen={openArtwork} />}
         {page === 'editor' && <Editor draft={draft} setDraft={setDraft} busy={saving}
           onPublish={() => goTo('/publish', '', { from: 'editor' })} />}
@@ -150,16 +156,13 @@ export default function App() {
           onLogin={account => {
             setUser(account)
             const { returnToPublish, from } = window.history.state ?? {}
-            goTo(returnToPublish ? '/publish' : '/', '', returnToPublish ? { from } : null, true)
+            goTo(returnToPublish ? '/publish' : '/gallery', '', returnToPublish ? { from } : null, true)
           }} />}
-        {page === 'profile' && user && <>
-          <div className="page-heading"><h1>마이페이지</h1><p>프로필을 수정하고 저장한 작품을 관리하세요.</p></div>
-          <div className="profile-layout">
-            <Works mine onEdit={openEditor} onNew={() => openEditor()} onOpen={openArtwork} />
-            <Profile user={user} onUpdated={account => { setUser(account); setMessage('닉네임을 저장했습니다.') }}
-              onDeleted={() => { setUser(null); setDraft(newDraft()); navigate('gallery', '회원 탈퇴가 완료됐습니다.') }} />
-          </div>
-        </>}
+        {page === 'profile' && user && <div className="profile-layout">
+          <Profile user={user} onUpdated={account => { setUser(account); setMessage('닉네임을 저장했습니다.') }}
+            onDeleted={() => { setUser(null); setDraft(newDraft()); navigate('gallery', '회원 탈퇴가 완료됐습니다.') }} />
+          <Works mine onEdit={openEditor} onNew={() => openEditor()} onOpen={openArtwork} />
+        </div>}
         {page === 'profile' && !user && ready && <section className="collection-state">
           <h1>마이페이지</h1><p className="muted">로그인하면 내 작품과 프로필을 볼 수 있어요.</p>
           <button className="primary" onClick={() => navigate('login')}>로그인</button>

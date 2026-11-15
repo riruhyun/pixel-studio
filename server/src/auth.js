@@ -6,6 +6,7 @@ import { Router } from 'express'
 import { db } from './db.js'
 
 export const auth = Router()
+const profileColumns = "id, username, nickname, DATE_FORMAT(created_at, '%Y-%m-%d') AS created_date"
 const cookieName = 'pixel_session'
 const cookieOptions = {
   httpOnly: true,
@@ -49,7 +50,7 @@ export async function identify(req, res, next) {
     return next()
   }
 
-  const [users] = await db.execute('SELECT id, username, nickname FROM users WHERE id = ?', [session.id])
+  const [users] = await db.execute(`SELECT ${profileColumns} FROM users WHERE id = ?`, [session.id])
   req.user = users[0]
   if (!req.user) res.clearCookie(cookieName, cookieOptions)
   next()
@@ -83,7 +84,7 @@ auth.post('/auth/register', async (req, res) => {
 auth.post('/auth/login', async (req, res) => {
   const username = clean(req.body?.username)
   const password = req.body?.password
-  const [users] = await db.execute('SELECT id, username, nickname, password FROM users WHERE username = ?', [username])
+  const [users] = await db.execute(`SELECT ${profileColumns}, password FROM users WHERE username = ?`, [username])
   const user = users[0]
 
   if (!user || !validPassword(password) || !await verifyPassword(password, user.password)) {
@@ -92,7 +93,7 @@ auth.post('/auth/login', async (req, res) => {
 
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '8h' })
   res.cookie(cookieName, token, { ...cookieOptions, maxAge: 8 * 60 * 60 * 1000 })
-  res.json({ id: user.id, username: user.username, nickname: user.nickname })
+  res.json({ id: user.id, username: user.username, nickname: user.nickname, created_date: user.created_date })
 })
 
 auth.post('/auth/logout', (req, res) => {

@@ -21,8 +21,16 @@
   --color-checker-light: var(--color-paper-2);
   --color-checker-dark: color-mix(in oklab, var(--color-rule) 65%, var(--color-paper-2));
   --color-grid: oklch(21% 0.024 40 / 0.13);
+  --color-artwork-paper: #fff;
+  --color-frame-depth: oklch(34% 0.071 62);
+  --color-frame-bronze: oklch(56% 0.104 68);
+  --color-frame-gilt: oklch(73% 0.118 76);
+  --color-frame-glint: oklch(89% 0.086 84);
+  --color-frame-shadow: oklch(23% 0.03 47 / 0.23);
 
-  --font-body: system-ui, "Malgun Gothic", sans-serif;
+  --font-body: "Pretendard Variable", system-ui, "Malgun Gothic", sans-serif;
+  --font-brand: "Bricolage Grotesque", var(--font-body);
+  --font-exhibit: Georgia, "Nanum Myeongjo", Batang, serif;
   --font-display: var(--font-body);
   --display-weight: 700;
   --tracking-display: -0.035em;
@@ -39,16 +47,45 @@
   --space-lg: 24px;
   --space-xl: 40px;
   --space-2xl: 64px;
-  --radius-card: 18px;
-  --radius-inner: 10px;
-  --radius-clip: 6px;
-  --shadow-card: 0 2px 6px oklch(21% 0.024 40 / 0.07), 0 14px 22px -18px oklch(21% 0.024 40 / 0.20);
+  --text-landing: clamp(2.875rem, 1.7rem + 3.65vw, 5rem);
+  --text-exhibit-title: clamp(1.875rem, 1.5rem + 1.25vw, 2.5rem);
+  --text-artwork-title: clamp(2rem, 1.5rem + 1.5vw, 3rem);
+  --color-landing-grid: color-mix(in oklab, var(--color-rule) 65%, var(--color-paper));
+  --radius-inner: 4px;
+  --radius-button: 999px;
+  --header-height: 68px;
+  --art-size: 416px;
+  --artwork-display-width: 34rem;
   --container: 1200px;
   --gutter: 32px;
   --gap-columns: 24px;
   --control-height: 40px;
   --z-base: 1;
   --z-sticky-nav: 10;
+}
+
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("/fonts/pretendard-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nanum Myeongjo";
+  src: url("/fonts/nanum-myeongjo.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
 }
 
 @media (max-width: 60rem) {
